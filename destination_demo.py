@@ -17,12 +17,46 @@ from std_msgs.msg import Int32
 from geometry_msgs.msg import Twist
 goalId = 0
 
+class movement :
+
+    def __init__(self):
+        self.pub_move = rospy.Publisher("/cmd_vel",Twist,queue_size=10)
+        self.move = Twist()
+
+    def publish_vel(self):
+        self.pub_move.publish(self.move)
+
+    def start_estimate(self):        
+        self.move.angular.z=2.5
+        self.pub_move.publish(self.move)
+    def finish_estimate(self):
+        self.move.angular.z=0.0
+        self.pub_move.publish(self.move)
+
+def pub_Twist(angle):
+    chk = Twist()
+
+    chk.linear.x = 0
+    chk.angular.z = angle
+
+    est.publish(chk)
+
 def locationCheck():
-    subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 2.84}}'", shell=True)
+    
+    pub_Twist(2.5)
+    
     rospy.loginfo("Estimate location...")
-    time.sleep(5)
-    subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 0.0}}'", shell=True)
+    
+    rospy.sleep(5.)
+
+    pub_Twist(0)
+
     rospy.loginfo("Estimate finished!")
+    
+    
+    #subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 2.5}}'", shell=True)
+    #subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 0.0}}'", shell=True)
+    
     
 
 
@@ -115,6 +149,8 @@ def feedbackCB(data):
             
             rospy.loginfo("flag : %d",flag)           
 
+
+
 if __name__ == "__main__":
     try:    
         goalId = 0
@@ -126,9 +162,11 @@ if __name__ == "__main__":
         pub = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=10)   
         arv = rospy.Subscriber('move_base/feedback', MoveBaseActionFeedback, feedbackCB, queue_size=10)
         ord = rospy.Subscriber('inputOrder', Int32, orderCB, queue_size=1)
-        chk = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
+        est = rospy.Publisher('/cmd_vel', Twist, queue_size = 10)
         
-        velMsg = Twist()
+
+
+        rate = rospy.Rate(10)
 
         locationCheck()
 
