@@ -22,6 +22,7 @@ def locationCheck():
     rospy.loginfo("Estimate location...")
     rospy.sleep(5)
     subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 0.0}}'", shell=True)
+    rospy.loginfo("Estimate finished!")
     
 
 
