@@ -17,21 +17,6 @@ from std_msgs.msg import Int32
 from geometry_msgs.msg import Twist
 goalId = 0
 
-class movement :
-
-    def __init__(self):
-        self.pub_move = rospy.Publisher("/cmd_vel",Twist,queue_size=10)
-        self.move = Twist()
-
-    def publish_vel(self):
-        self.pub_move.publish(self.move)
-
-    def start_estimate(self):        
-        self.move.angular.z=2.5
-        self.pub_move.publish(self.move)
-    def finish_estimate(self):
-        self.move.angular.z=0.0
-        self.pub_move.publish(self.move)
 
 def pub_Twist(angle):
     chk = Twist()
@@ -44,13 +29,11 @@ def pub_Twist(angle):
 def locationCheck():
     
     pub_Twist(2.5)
-    
     rospy.loginfo("Estimate location...")
     
     rospy.sleep(5.)
 
     pub_Twist(0)
-
     rospy.loginfo("Estimate finished!")
     
     
@@ -103,7 +86,9 @@ def orderCB(data):
     flag = data.data
     rospy.loginfo("Received flag : %d", flag)
     checkDist = 10
-    if flag == 0:
+
+
+    elif flag == 1:
         rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
         # find nearest point
         for i in range(len(goalListY)):
@@ -117,12 +102,47 @@ def orderCB(data):
         goalId = nearestPoint
         goTo(goalId)
 
-    elif flag == 99:
+
+
+    elif flag == 0:
         stop()
 
-    #elif flag <= len(goalListX) & flag>= 1 :
-    else :
+    
+    # 
+    elif (flag > 1) & (flag%2 == 0)
+        orderListX = []
+        orderListY = []
+
+        
+        for i in range(8,0,-1):
+        
+            if (flag - 2**i) > -1:
+                flag = flag - 2**i
+
+                goalList.append(i)
+
+                orderListX.append(goalListX[i-1])
+                orderListY.append(goalListY[i-1])
+        print("goalList :",goalList)
+        print("orderListX :",orderListX)
+        print("orderListY :",orderListY)
+        
+        
+        #phasing
+        for i in range(len(goalList)):
+        #   if nearest = 
+            rospy.loginfo("X : %.2f , Y : %.2f",orderListX[i],orderListY[i])
+
+
+        
+        
         goTo(flag-1)
+
+
+        else:
+            roapy.loginfo("Invalid flag")
+
+
 
     #else:
     #    rospy.loginfo("Wrong input : %d ", flag)
@@ -163,9 +183,7 @@ if __name__ == "__main__":
         arv = rospy.Subscriber('move_base/feedback', MoveBaseActionFeedback, feedbackCB, queue_size=10)
         ord = rospy.Subscriber('inputOrder', Int32, orderCB, queue_size=1)
         est = rospy.Publisher('/cmd_vel', Twist, queue_size = 10)
-        
-
-
+    
         rate = rospy.Rate(10)
 
         locationCheck()
@@ -178,6 +196,9 @@ if __name__ == "__main__":
         goalListX = [0.00, 0.66, 0.66, 0.00, 0.00,-0.66,-0.66, 0.00]
         goalListY = [0.66, 0.66,-0.66,-0.66, 0.66, 0.66,-0.66,-0.66]        
         
+        orderListX = []
+        orderListY = []
+
         # goalListX.extend(locationX)
         # goalListY.extend(locationY)
 
