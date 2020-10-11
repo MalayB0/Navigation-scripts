@@ -54,21 +54,27 @@ def resultCB(data):
             else:
                 goalId = 0 
 
+
     elif (flag > 1) & (flag%2 == 0):
         global orderId
+        #안내 끝나면 finished = 1
+        finished = 0
+
 
         if data.status.status == 3: # reached
             # 물건을 고를 때 까지 3초 대기
             time.sleep(3)
 
             goTo(orderListX[orderId], orderListY[orderId])
+
             if orderId < (len(orderListX)-1):
                 orderId = orderId + 1
             
             # 안내 끝
             elif orderId == len(orderListX)-1:
-                
-                stop()
+                finished = 1
+                rospy.loginfo("finished")
+
 
 
 def orderCB(data):
@@ -101,24 +107,31 @@ def orderCB(data):
 
     
     # 
-    elif (flag > 1) & (flag%2 == 0)
+    elif (flag > 1) & (flag%2 == 0):
+        
+        calcFlag = flag
         global orderListX
         global orderListY
         global orderId
+        goalList = []
+        orderListX = []
+        orderListY = []
         # 
         for i in range(8,0,-1):
-            if (flag - 2**i) > -1:
-                flag = flag - 2**i
+            if (calcFlag - 2**i) > -1:
+                calcFlag = calcFlag - 2**i
                 goalList.append(i)
                 orderListX.append(goalListX[i-1])
                 orderListY.append(goalListY[i-1])
-        print("goalList :",goalList)
+        print("goalList :" , goalList)
         print("orderListX :",orderListX)
         print("orderListY :",orderListY)
         
         
         goTo(orderListX[orderId], orderListY[orderId])
-        orderId = orderId + 1
+        
+        if len(orderListX) < 1 :
+            orderId = orderId + 1
         #goTo(flag-1)
 
 
