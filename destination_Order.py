@@ -55,6 +55,7 @@ def resultCB(data):
                 goalId = 0 
 
 
+
     elif (flag > 1) & (flag%2 == 0):
         global orderId
         #안내 끝나면 finished = 1
@@ -130,7 +131,7 @@ def orderCB(data):
         
         goTo(orderListX[orderId], orderListY[orderId])
         
-        if len(orderListX) < 1 :
+        if len(orderListX) < 1:
             orderId = orderId + 1
         #goTo(flag-1)
 
