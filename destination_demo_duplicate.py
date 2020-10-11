@@ -17,6 +17,8 @@ from std_msgs.msg import Int32
 from geometry_msgs.msg import Twist
 goalId = 0
 
+
+
 def locationCheck():
     subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 2.84}}'", shell=True)
     rospy.loginfo("Estimate location...")
@@ -26,13 +28,14 @@ def locationCheck():
     
 
 
+
 def goTo(index):
     goalMsg.header.stamp = rospy.Time.now()
     goalMsg.pose.position.x = goalListX[index]
     goalMsg.pose.position.y = goalListY[index]
     pub.publish(goalMsg)
     rospy.loginfo("Initial goal published! Goal ID is: %d", index)
-
+    
 def stop():
     rospy.loginfo("Cancel goal")
     subprocess.call('rostopic pub -1 /move_base/cancel actionlib_msgs/GoalID -- {}', shell=True)
@@ -128,9 +131,9 @@ if __name__ == "__main__":
         ord = rospy.Subscriber('inputOrder', Int32, orderCB, queue_size=1)
         chk = rospy.Publisher('cmd_vel', Twist, queue_size = 10)
         
-        velMsg = Twist()
+        # velMsg = Twist()
 
-        locationCheck()
+        # locationCheck()
 
         goalMsg = PoseStamped()
         

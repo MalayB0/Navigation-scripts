@@ -88,7 +88,7 @@ def orderCB(data):
     checkDist = 10
 
 
-    elif flag == 1:
+    if flag == 1:
         rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
         # find nearest point
         for i in range(len(goalListY)):
@@ -139,8 +139,8 @@ def orderCB(data):
         goTo(flag-1)
 
 
-        else:
-            roapy.loginfo("Invalid flag")
+    else:
+        roapy.loginfo("Invalid flag")
 
 
 
