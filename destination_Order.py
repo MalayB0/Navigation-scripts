@@ -17,6 +17,18 @@ from std_msgs.msg import Int32
 
 goalId = 0
 
+def findNearestPoint(List):
+    checkDist = 10
+    # find nearest point
+    for i in range(len(orderList)):
+        rangeI = math.sqrt((nowX - orderListX[i])**2 + (nowY - orderListY[i])**2)
+        rospy.loginfo("Distance to point %d : %f", i,rangeI)
+        if rangeI < checkDist:
+            checkDist = rangeI
+            nearestPoint = i
+    return nearestPoint
+
+
 
 
 def goTo(X,Y):
@@ -58,12 +70,12 @@ def resultCB(data):
 
     elif (flag > 1) & (flag%2 == 0):
         global orderId
-        #안내 끝나면 finished = 1
+        # when guide finished, finished = 1
         finished = 0
 
 
         if data.status.status == 3: # reached
-            # 물건을 고를 때 까지 3초 대기
+            # wait 3 seconds
             time.sleep(3)
 
             goTo(orderListX[orderId], orderListY[orderId])
@@ -71,7 +83,7 @@ def resultCB(data):
             if orderId < (len(orderListX)-1):
                 orderId = orderId + 1
             
-            # 안내 끝
+            # end guide
             elif orderId == len(orderListX)-1:
                 finished = 1
                 rospy.loginfo("finished")
@@ -87,7 +99,7 @@ def orderCB(data):
     checkDist = 10
 
 
-    if flag == 1:
+    if flag == 0:
         rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
         # find nearest point
         for i in range(len(goalListY)):
@@ -103,37 +115,48 @@ def orderCB(data):
 
 
 
-    elif flag == 0:
+    elif flag == 1:
         stop()
 
     
     # 
     elif (flag > 1) & (flag%2 == 0):
-        
         calcFlag = flag
         global orderListX
         global orderListY
         global orderId
-        goalList = []
+        global nearestPoint
+        # 
+        orderId = []
         orderListX = []
         orderListY = []
-        # 
+        
         for i in range(8,0,-1):
             if (calcFlag - 2**i) > -1:
                 calcFlag = calcFlag - 2**i
-                goalList.append(i)
+                orderList.append(i)
                 orderListX.append(goalListX[i-1])
                 orderListY.append(goalListY[i-1])
-        print("goalList :" , goalList)
+        print("orderList :" , orderList)
         print("orderListX :",orderListX)
         print("orderListY :",orderListY)
         
         
-        goTo(orderListX[orderId], orderListY[orderId])
+        #goTo(orderListX[orderId], orderListY[orderId])
+        #nearestOrderPoint = -99
+
+        ##
+
+        rospy.loginfo("Start navigate")
+        rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
+  
+        nearestPoint = findNearestPoint(orderList)
+
+        rospy.loginfo("Nearest point : %d ", nearestPoint+1)
+
+        goTo(orderListX[nearestPoint],orderListY[nearestPoint])
+        orderList.remove(orderList[nearestPoint])
         
-        if len(orderListX) < 1:
-            orderId = orderId + 1
-        #goTo(flag-1)
 
 
 
@@ -151,13 +174,16 @@ def feedbackCB(data):
     global goalId
     global nowX
     global nowY
+    global nearestPoint
+    global flag
     # calculating distance to destination
     nowX = data.feedback.base_position.pose.position.x
     nowY = data.feedback.base_position.pose.position.y
-    distX = nowX - goalListX[goalId-1]
-    distY = nowY - goalListY[goalId-1]
-    dist = math.sqrt(distX*distX + distY*distY)
+
     if flag == 0:
+        distX = nowX - goalListX[goalId-1]
+        distY = nowY - goalListY[goalId-1]
+        dist = math.sqrt(distX*distX + distY*distY)
         if dist < 0.08: # If the distance is shorter than 7cm, publish next goal
             if goalId < (len(goalListX)-1):
                 goalId = goalId + 1
@@ -169,6 +195,32 @@ def feedbackCB(data):
             goTo(goalListX[goalId-1], goalListY[goalId-1])
             rospy.loginfo("flag : %d",flag)           
 
+    elif flag > 1:
+        distX = nowX - orderListX[nearestPoint]
+        distY = nowY - orderListY[nearestPoint]
+        dist = math.sqrt(distX*distX + distY*distY)   
+        #rospy.loginfo("계산하고있음 : %f",dist)         
+        if (flag%2 == 0) & (dist < 0.08):
+            
+            if len(orderList) > 0:
+                
+                nearestPoint = findNearestPoint(orderList)
+
+                rospy.loginfo("Next nearest point : %d (%d)", nearestPoint, orderList[nearestPoint])
+
+                goTo(orderListX[nearestPoint],orderListY[nearestPoint])
+                orderList.remove(orderList[nearestPoint])
+
+            elif len(orderList) == 0:
+                rospy.loginfo("Navigate finished. change to default mode.")
+                stop()
+                time.sleep(5)
+                flag = 0
+
+
+
+    else :
+        rospy.loginfo("Wrong flag")
 
 
 if __name__ == "__main__":
@@ -177,6 +229,7 @@ if __name__ == "__main__":
         flag = 0 # 0 : default
         orderId = 0
         nowX = 0; nowY = 0
+        nearestPoint = -1
         # ROS Init  
         rospy.init_node('userControl', anonymous=True)
         sub = rospy.Subscriber('move_base/result', MoveBaseActionResult, resultCB, queue_size=10)
@@ -191,7 +244,7 @@ if __name__ == "__main__":
         retry = rospy.get_param('~retry', '1') 
         goalListX = [0.00, 0.66, 0.66, 0.00, 0.00,-0.66,-0.66, 0.00]
         goalListY = [0.66, 0.66,-0.66,-0.66, 0.66, 0.66,-0.66,-0.66]        
-        
+        orderList = []    
         orderListX = []
         orderListY = []
 

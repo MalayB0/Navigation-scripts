@@ -10,7 +10,7 @@ if __name__ == "__main__":
         rospy.init_node('Order', anonymous=True)
         while not rospy.is_shutdown():
             # 0      : default
-            # 99     : stop
+            # 1      : stop
             # others : publish destination
             flag = input()
 
