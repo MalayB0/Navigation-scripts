@@ -20,8 +20,8 @@ goalId = 0
 def findNearestPoint(List):
     checkDist = 10
     # find nearest point
-    for i in range(len(orderList)):
-        rangeI = math.sqrt((nowX - orderListX[i])**2 + (nowY - orderListY[i])**2)
+    for i in range(len(List)):
+        rangeI = math.sqrt((nowX - ListX[i])**2 + (nowY - ListY[i])**2)
         rospy.loginfo("Distance to point %d : %f", i,rangeI)
         if rangeI < checkDist:
             checkDist = rangeI
@@ -42,6 +42,8 @@ def stop():
     rospy.loginfo("Cancel goal")
     subprocess.call('rostopic pub -1 /move_base/cancel actionlib_msgs/GoalID -- {}', shell=True)
 
+
+
 def init(goalListX, goalListY, retry, map_frame):
     global goalId
     goalMsg.header.frame_id = map_frame
@@ -54,6 +56,8 @@ def init(goalListX, goalListY, retry, map_frame):
 
     goalId = goalId + 1 # goalId : 0 -> 1
     
+
+
 def resultCB(data):
     global flag
 
@@ -100,7 +104,7 @@ def orderCB(data):
 
 
     if flag == 0:
-        rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
+        rospy.loginfo("Recent Location : (%f, %f)", nowX, nowY)
         # find nearest point
         for i in range(len(goalListY)):
             rangeI = math.sqrt((nowX - goalListX[i])**2 + (nowY - goalListY[i])**2)
@@ -137,18 +141,11 @@ def orderCB(data):
                 orderList.append(i)
                 orderListX.append(goalListX[i-1])
                 orderListY.append(goalListY[i-1])
-        print("orderList :" , orderList)
-        print("orderListX :",orderListX)
-        print("orderListY :",orderListY)
-        
-        
-        #goTo(orderListX[orderId], orderListY[orderId])
-        #nearestOrderPoint = -99
-
-        ##
-
+        rospy.loginfo("orderList :" , orderList)
+        rospy.loginfo("orderListX :", orderListX)
+        rospy.loginfo("orderListY :", orderListY)
         rospy.loginfo("Start navigate")
-        rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
+        rospy.loginfo("Location of robot : [%.2f, %.2f]", nowX, nowY)
   
         nearestPoint = findNearestPoint(orderList)
 
@@ -170,7 +167,8 @@ def orderCB(data):
     #    rospy.loginfo("Wrong input : %d ", flag)
     #    pass
 
-def feedbackCB(data): 
+
+def feedbackCB(data):
     global goalId
     global nowX
     global nowY
