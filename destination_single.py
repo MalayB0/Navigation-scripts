@@ -8,6 +8,13 @@ import time
 import sys
 import subprocess
 
+
+
+DEFAULT = 0
+STOP = 1
+LOW_BATTERY = -1
+
+
 #from std_msgs.msg import String
 
 from move_base_msgs.msg import MoveBaseActionResult
@@ -88,7 +95,7 @@ def orderCB(data):
     checkDist = 10
 
 
-    if flag == 1:
+    if flag == DEFAULT:
         rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
         # find nearest point
         for i in range(len(goalListY)):
@@ -104,37 +111,14 @@ def orderCB(data):
 
 
 
-    elif flag == 0:
+    elif flag == STOP:
         stop()
 
-    
+    elif flag == LOW_BATTERY:
+        goto(chargeStartion)
+
     # 
-    elif (flag > 1) & (flag%2 == 0)
-        orderListX = []
-        orderListY = []
-
-        
-        for i in range(8,0,-1):
-        
-            if (flag - 2**i) > -1:
-                flag = flag - 2**i
-
-                goalList.append(i)
-
-                orderListX.append(goalListX[i-1])
-                orderListY.append(goalListY[i-1])
-        print("goalList :",goalList)
-        print("orderListX :",orderListX)
-        print("orderListY :",orderListY)
-        
-        
-        #phasing
-        for i in range(len(goalList)):
-        #   if nearest = 
-            rospy.loginfo("X : %.2f , Y : %.2f",orderListX[i],orderListY[i])
-
-
-        
+    elif flag > 1:
         
         goTo(flag-1)
 
