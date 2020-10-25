@@ -11,8 +11,8 @@ import subprocess
 
 
 DEFAULT = 0
-STOP = 1
-LOW_BATTERY = -1
+STOP = -1
+LOW_BATTERY = -2
 
 
 #from std_msgs.msg import String
@@ -38,7 +38,7 @@ def locationCheck():
     pub_Twist(2.5)
     rospy.loginfo("Estimate location...")
     
-    rospy.sleep(5.)
+    rospy.sleep(5.0)
 
     pub_Twist(0)
     rospy.loginfo("Estimate finished!")
@@ -136,7 +136,7 @@ def feedbackCB(data):
     global goalId
     global nowX
     global nowY
-    # calculating distance to destination
+    # calculate distance to destination
     nowX = data.feedback.base_position.pose.position.x
     nowY = data.feedback.base_position.pose.position.y
     distX = nowX - goalListX[goalId-1]
