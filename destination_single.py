@@ -75,15 +75,22 @@ def init(goalListX, goalListY, retry, map_frame):
     
 def resultCB(data):
     global flag
+    global goalId
 
     if flag == 0:
-        global goalId
+        
         if data.status.status == 3: # reached
             goTo(goalId)
             if goalId < (len(goalListX)-1):
                 goalId = goalId + 1
             else:
                 goalId = 0 
+    
+
+    elif flag > 0:
+        resultMSG = Int32()    
+        resultMSG = 2**flag
+        rst.publish(resultMSG)
 
 
 def orderCB(data):
@@ -94,6 +101,16 @@ def orderCB(data):
     rospy.loginfo("Received flag : %d", flag)
     checkDist = 10
 
+##
+    if flag > 0:
+        calcFlag = flag
+
+        for i in range(8,-1,-1):
+            if calcFlag == 2**i:
+                flag = i
+                break
+
+##
 
     if flag == DEFAULT:
         rospy.loginfo("Location of robot : (%f, %f)", nowX, nowY)
@@ -124,7 +141,7 @@ def orderCB(data):
 
 
     else:
-        roapy.loginfo("Invalid flag")
+        rospy.loginfo("Invalid flag")
 
 
 
@@ -167,13 +184,16 @@ if __name__ == "__main__":
         arv = rospy.Subscriber('move_base/feedback', MoveBaseActionFeedback, feedbackCB, queue_size=10)
         ord = rospy.Subscriber('inputOrder', Int32, orderCB, queue_size=1)
         est = rospy.Publisher('/cmd_vel', Twist, queue_size = 10)
-    
+        rst = rospy.Publisher('r_flag', Int32, queue_size = 10)
+
         rate = rospy.Rate(10)
 
-        locationCheck()
+        #locationCheck()
 
         goalMsg = PoseStamped()
         
+
+
         # Get params
         map_frame = rospy.get_param('~map_frame', 'map' )
         retry = rospy.get_param('~retry', '1') 

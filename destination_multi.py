@@ -105,6 +105,7 @@ def orderCB(data):
 
     if flag == 0:
         rospy.loginfo("Recent Location : (%f, %f)", nowX, nowY)
+        
         # find nearest point
         for i in range(len(goalListY)):
             rangeI = math.sqrt((nowX - goalListX[i])**2 + (nowY - goalListY[i])**2)
