@@ -15,10 +15,11 @@ from geometry_msgs.msg import PoseStamped
 from move_base_msgs.msg import MoveBaseActionFeedback
 from std_msgs.msg import Int32
 from geometry_msgs.msg import Twist
+
 goalId = 0
 
 
-
+# Unused
 def locationCheck():
     subprocess.call("rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{angular: {x: 0.0,y: 0.0,z: 2.84}}'", shell=True)
     rospy.loginfo("Estimate location...")
