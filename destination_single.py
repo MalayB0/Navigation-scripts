@@ -52,8 +52,15 @@ def locationCheck():
 
 def goTo(index):
     goalMsg.header.stamp = rospy.Time.now()
-    goalMsg.pose.position.x = goalListX[index]
-    goalMsg.pose.position.y = goalListY[index]
+
+    if flag == LOW_BATTERY:
+        goalMsg.pose.position.x = 0
+        goalMsg.pose.position.y = 0
+    else:
+        goalMsg.pose.position.x = goalListX[index]
+        goalMsg.pose.position.y = goalListY[index]
+        
+    
     pub.publish(goalMsg)
     rospy.loginfo("Initial goal published! Goal ID is: %d", index)
 
@@ -132,7 +139,7 @@ def orderCB(data):
         stop()
 
     elif flag == LOW_BATTERY:
-        goto(chargeStartion)
+        goTo(LOW_BATTERY)
 
     # 
     elif flag > 1:
@@ -216,7 +223,7 @@ if __name__ == "__main__":
                     rospy.spin()
 
                 else:
-                    rospy.errinfo("Lengths of goal lists are not the same")
+                    rospy.loginfo("Lengths of goal lists are not the same")
 
     except rospy.ROSInterruptException:
         pass
