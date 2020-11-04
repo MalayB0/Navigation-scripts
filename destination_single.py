@@ -197,8 +197,8 @@ if __name__ == "__main__":
         # Get params
         map_frame = rospy.get_param('~map_frame', 'map' )
         retry = rospy.get_param('~retry', '1') 
-        goalListX = [0.00, 0.66, 0.66, 0.00, 0.00,-0.66,-0.66, 0.00]
-        goalListY = [0.66, 0.66,-0.66,-0.66, 0.66, 0.66,-0.66,-0.66]        
+        goalListX = [0.00, 0.85, 0.85, 0.00, 0.00,-0.85,-0.85, 0.00]
+        goalListY = [0.75, 0.75,-0.75,-0.75, 0.75, 0.75,-0.75,-0.75]        
         
         orderListX = []
         orderListY = []

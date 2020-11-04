@@ -142,7 +142,7 @@ if __name__ == "__main__":
         map_frame = rospy.get_param('~map_frame', 'map' )
         retry = rospy.get_param('~retry', '1') 
         goalListX = [0.00, 0.66, 0.66, 0.00, 0.00,-0.66,-0.66, 0.00]
-        goalListY = [0.66, 0.66,-0.66,-0.66, 0.66, 0.66,-0.66,-0.66]        
+        goalListY = [0.66, 0.66,-0.66,-0.66, 0.66, 0.66,-0.66,-0.66]         
         
         # goalListX.extend(locationX)
         # goalListY.extend(locationY)
