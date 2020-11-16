@@ -8,7 +8,7 @@ from sensor_msgs.msg import BatteryState
 
 def resultCB(data):
     percentage = data.percentage
-    rospy.loginfo("%.2f percent left" % (percentage*100))
+    rospy.loginfo(percentage)
 
 
 if __name__ == "__main__":
@@ -16,9 +16,7 @@ if __name__ == "__main__":
         rospy.init_node('checkBattery', anonymous=True)
         sub = rospy.Subscriber('battery_state', BatteryState, resultCB, queue_size=10)
         
-
-
-        rate = rospy.Rate(1)
+        rate = rospy.Rate(0.1)
 
         rospy.spin()
         # goalListX.extend(locationX)

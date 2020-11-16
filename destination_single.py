@@ -95,9 +95,10 @@ def resultCB(data):
     
 
     elif flag > 0:
-        resultMSG = Int32()    
-        resultMSG = 2**flag
-        rst.publish(resultMSG)
+        if data.status.status == 3: # reached
+            resultMSG = Int32()    
+            resultMSG = 2**flag
+            rst.publish(resultMSG)
 
 
 def orderCB(data):
@@ -142,7 +143,7 @@ def orderCB(data):
         goTo(LOW_BATTERY)
 
     # 
-    elif flag > 1:
+    elif flag > 0:
         
         goTo(flag-1)
 
