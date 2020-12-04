@@ -121,7 +121,8 @@ def orderCB(data):
     global flag
     global nowX
     global nowY
-    
+    global goalId
+
     flag = data.data
     rospy.loginfo("Received flag : %d", flag)
     checkDist = 10
@@ -229,15 +230,18 @@ if __name__ == "__main__":
         # Get params
         map_frame = rospy.get_param('~map_frame', 'map' )
         retry = rospy.get_param('~retry', '1') 
-        goalListX = [0.00, 0.85, 0.85, 0.00, 0.00,-0.85,-0.85, 0.00]
-        goalListY = [0.75, 0.75,-0.75,-0.75, 0.75, 0.75,-0.75,-0.75] 
+        #goalListX = [0.00, 0.85, 0.85, 0.00, 0.00,-0.85,-0.85, 0.00]
+        #goalListY = [0.75, 0.75,-0.75,-0.75, 0.75, 0.75,-0.75,-0.75] 
 
-        #goalListX = [0.89, 1.27, -0.32, -0.77, 0.89, 0.49, -1.23, -0.77]
-        #goalListY = [0.45, -0.37, -1.24, -0.34, 0.45, 1.28, 0.46, -0.34] 
-
+        
         #goalListX = [-0.89, -0.59, 1.36, 0.96, -0.89, -1.39, 0.61, 0.96]
         #goalListY = [0.45, 1.33, 0.62, -0.31, 0.45, -0.64, -1.36, -0.31] 
 
+        goalListX = [-1.0, -0.93, 1.08, 1.0, -1.0, -1.22, 0.95, 1.0]
+        goalListY = [0.11, 1.14, 0.87, -0.1, 0.11, -0.96, -1.23, -0.1] 
+
+        
+        
         # 원점 : 0,0
 
 
