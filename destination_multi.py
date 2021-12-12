@@ -31,7 +31,7 @@ def findNearestPoint(List):
 
 
 
-def goTo(X,Y):
+def setDestination(X,Y):
     goalMsg.header.stamp = rospy.Time.now()
     goalMsg.pose.position.x = X
     goalMsg.pose.position.y = Y
@@ -52,7 +52,7 @@ def init(goalListX, goalListY, retry, map_frame):
     
     time.sleep(1)
 
-    goTo(goalListX[goalId], goalListY[goalId])
+    setDestination(goalListX[goalId], goalListY[goalId])
 
     goalId = goalId + 1 # goalId : 0 -> 1
     
@@ -64,7 +64,7 @@ def resultCB(data):
     if flag == 0:
         global goalId
         if data.status.status == 3: # reached
-            goTo(goalListX[goalId], goalListY[goalId])
+            setDestination(goalListX[goalId], goalListY[goalId])
             if goalId < (len(goalListX)-1):
                 goalId = goalId + 1
             else:
@@ -82,7 +82,7 @@ def resultCB(data):
             # wait 3 seconds
             time.sleep(3)
 
-            goTo(orderListX[orderId], orderListY[orderId])
+            setDestination(orderListX[orderId], orderListY[orderId])
 
             if orderId < (len(orderListX)-1):
                 orderId = orderId + 1
@@ -116,7 +116,7 @@ def orderCB(data):
         
         rospy.loginfo("Nearest point : %d ", nearestPoint+1)
         goalId = nearestPoint
-        goTo(goalListX[goalId], goalListY[goalId])
+        setDestination(goalListX[goalId], goalListY[goalId])
 
 
 
@@ -152,7 +152,7 @@ def orderCB(data):
 
         rospy.loginfo("Nearest point : %d ", nearestPoint+1)
 
-        goTo(orderListX[nearestPoint],orderListY[nearestPoint])
+        setDestination(orderListX[nearestPoint],orderListY[nearestPoint])
         orderList.remove(orderList[nearestPoint])
         
 
@@ -191,7 +191,7 @@ def feedbackCB(data):
 
 
             #goTo(goalId-1)
-            goTo(goalListX[goalId-1], goalListY[goalId-1])
+            setDestination(goalListX[goalId-1], goalListY[goalId-1])
             rospy.loginfo("flag : %d",flag)           
 
     elif flag > 1:
@@ -207,7 +207,7 @@ def feedbackCB(data):
 
                 rospy.loginfo("Next nearest point : %d (%d)", nearestPoint, orderList[nearestPoint])
 
-                goTo(orderListX[nearestPoint],orderListY[nearestPoint])
+                setDestination(orderListX[nearestPoint],orderListY[nearestPoint])
                 orderList.remove(orderList[nearestPoint])
 
             elif len(orderList) == 0:

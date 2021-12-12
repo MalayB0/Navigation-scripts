@@ -36,7 +36,7 @@ def init(goalListX, goalListY, retry, map_frame):
     
     time.sleep(1)
 
-    goTo(goalId)
+    setDestination(goalId)
 
     goalId = goalId + 1 # goalId : 0 -> 1
 
@@ -66,7 +66,7 @@ def locationCheck():
     
 
 # 목적지로 이동
-def goTo(index): 
+def setDestination(index): 
     goalMsg.header.stamp = rospy.Time.now()
 
     if flag == LOW_BATTERY:
@@ -101,7 +101,7 @@ def resultCB(data):
     if flag == 0:
         
         if data.status.status == 3: # reached
-            goTo(goalId)
+            setDestination(goalId)
             if goalId < (len(goalListX)-1):
                 goalId = goalId + 1
             else:
@@ -149,7 +149,7 @@ def orderCB(data):
         # 현재 위치로부터 가장 가까운 지점을 찾고, 거기서부터 다시 배회 시작
         rospy.loginfo("Nearest point : %d ", nearestPoint+1)
         goalId = nearestPoint
-        goTo(goalId)
+        setDestination(goalId)
 
 
     ##  정지 메세지를 받았을 경우 정지
@@ -158,11 +158,11 @@ def orderCB(data):
 
     ##  배터리 부족 메세지를 받았을 경우 충전소로 이동
     elif flag == LOW_BATTERY:
-        goTo(LOW_BATTERY)
+        setDestination(LOW_BATTERY)
 
     ##  목적지 정보를 받았을 경우 해당 목적지로 이동
     elif flag > 0:
-        goTo(flag-1)
+        setDestination(flag-1)
 
     ##  그외 : 잘못된 flag
     else:
@@ -187,7 +187,7 @@ def feedbackCB(data):
             else:
                 goalId = 0            
 
-            goTo(goalId-1)
+            setDestination(goalId-1)
             
             rospy.loginfo("flag : %d",flag)           
 
@@ -199,7 +199,7 @@ def batteryCB(data):
     Volt = data.voltage
     if Volt < 11.1:
         flag = LOW_BATTERY
-        goTo(LOW_BATTERY)
+        setDestination(LOW_BATTERY)
 
 
 
